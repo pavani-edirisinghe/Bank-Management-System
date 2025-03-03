@@ -1,0 +1,2 @@
+Type,AccountNumber,Name,Address,Balance,TransactionType,Amount,TransactionDate,LoanAmount,InterestRate,LoanEndDate
+Customer,1255678839,sunil,colombo,500,,,,

@@ -8,7 +8,7 @@ namespace DSA_Project
 {
     class Loan
     {
-        public string AccountNumber { get; set; } // Add this property
+        public string AccountNumber { get; set; } 
         public decimal Amount { get; set; }
         public decimal InterestRate { get; set; }
         public DateTime StartDate { get; set; }

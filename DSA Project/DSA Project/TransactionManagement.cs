@@ -1,34 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Security.Principal;
-using System.Transactions;
 
 namespace DSA_Project
 {
     class TransactionManagement : Project
     {
-        static void CenteredText(string text)
+        static void CenteredText(string text, ConsoleColor color = ConsoleColor.White)
         {
             int windowWidth = Console.WindowWidth;
             int textWidth = text.Length;
             int spaces = (windowWidth - textWidth) / 2;
             Console.SetCursorPosition(spaces, Console.CursorTop);
+            ColorHelper.SetColor(color);
             Console.WriteLine(text);
+            ColorHelper.ResetColor();
         }
 
-        static void DisplayCenteredWithBorder(string[] items)
+        static void DisplayCenteredWithBorder(string[] items, ConsoleColor color = ConsoleColor.Cyan)
         {
             int consoleWidth = Console.WindowWidth;
-            int maxItemLength = 0;
-            foreach (var item in items)
-            {
-                if (item.Length > maxItemLength)
-                    maxItemLength = item.Length;
-            }
+            int maxItemLength = items.Max(item => item.Length);
             int boxWidth = maxItemLength + 6;
             int leadingSpaces = (consoleWidth - boxWidth) / 2;
 
+            ColorHelper.SetColor(color);
             Console.SetCursorPosition(leadingSpaces, Console.CursorTop);
             Console.WriteLine("╔" + new string('═', boxWidth - 2) + "╗");
 
@@ -38,23 +35,50 @@ namespace DSA_Project
                 string paddedItem = item.PadRight(maxItemLength);
                 Console.WriteLine($"║  {paddedItem}  ║");
             }
+
             Console.SetCursorPosition(leadingSpaces, Console.CursorTop);
             Console.WriteLine("╚" + new string('═', boxWidth - 2) + "╝");
+            ColorHelper.ResetColor();
         }
 
-        static void CenteredInputPrompt(string prompt, int maxPromptLength, out string value)
+        static void CenteredTextMultiColor(string part1, ConsoleColor color1, string part2, ConsoleColor color2, string part3, ConsoleColor color3)
+        {
+            string combinedText = part1 + part2 + part3;
+
+            int windowWidth = Console.WindowWidth;
+            int textWidth = combinedText.Length;
+            int spaces = (windowWidth - textWidth) / 2;
+
+            Console.SetCursorPosition(spaces, Console.CursorTop);
+
+            ColorHelper.SetColor(color1);
+            Console.Write(part1);
+
+            ColorHelper.SetColor(color2);
+            Console.Write(part2);
+
+            ColorHelper.SetColor(color3);
+            Console.Write(part3);
+
+            ColorHelper.ResetColor();
+
+            Console.WriteLine();
+        }
+
+        static void CenteredInputPrompt(string prompt, int maxPromptLength, out string value, ConsoleColor color = ConsoleColor.White)
         {
             int windowWidth = Console.WindowWidth;
             int totalTextWidth = maxPromptLength + 1;
             int spaces = (windowWidth - totalTextWidth - 8) / 2;
 
             Console.SetCursorPosition(spaces, Console.CursorTop);
+            ColorHelper.SetColor(color);
             Console.Write(prompt);
 
             Console.SetCursorPosition(spaces + prompt.Length, Console.CursorTop);
             value = Console.ReadLine();
+            ColorHelper.ResetColor();
         }
-
 
         public static void transMng(List<Account> accounts, string filePath)
         {
@@ -62,8 +86,8 @@ namespace DSA_Project
             {
                 Console.Clear();
                 Console.WriteLine();
-                string text1 = "******** Transaction Management *******";
-                CenteredText(text1);
+                CenteredTextMultiColor("********* ", ConsoleColor.Green, "Transaction Management", ConsoleColor.Yellow, " ********", ConsoleColor.Green);
+
 
                 string[] items = new string[]
                 {
@@ -74,18 +98,17 @@ namespace DSA_Project
                     "Press 5 to Back"
                 };
 
-                int consoleWidth = Console.WindowWidth;
-                int maxItemLength = 0;
-
-                DisplayCenteredWithBorder(items);
+                DisplayCenteredWithBorder(items, ConsoleColor.Cyan);
                 Console.WriteLine();
-                
+
                 string text3 = "Choose an option: ";
                 int windowWidth3 = Console.WindowWidth;
                 int textWidth3 = text3.Length;
                 int spaces3 = (windowWidth3 - textWidth3) / 2;
                 Console.SetCursorPosition(spaces3, Console.CursorTop);
+                ColorHelper.SetColor(ConsoleColor.Magenta);
                 Console.Write(text3);
+                ColorHelper.ResetColor();
                 string input = Console.ReadLine();
 
                 if (int.TryParse(input, out int choice))
@@ -108,14 +131,14 @@ namespace DSA_Project
                             Console.Clear();
                             return;
                         default:
-                            Console.WriteLine("Invalid choice! Please try again.");
+                            CenteredText("Invalid choice! Please try again.", ConsoleColor.Red);
                             break;
                     }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine();
-                CenteredText("Press 3 to go back to the Transaction Management Menu or Press 7 to go back Main Menu..!");
+                CenteredText("Press 3 to go back to the Transaction Management Menu or Press 7 to go back Main Menu..!", ConsoleColor.Blue);
 
                 while (true)
                 {
@@ -132,8 +155,7 @@ namespace DSA_Project
                     }
                     else
                     {
-                        CenteredText("Invalid choice! Enter Again.");
-                        
+                        CenteredText("Invalid choice! Enter Again.", ConsoleColor.Red);
                     }
                 }
             }
@@ -143,8 +165,7 @@ namespace DSA_Project
         {
             Console.Clear();
             Console.WriteLine();
-            string text4 = "********** Money Deposit *********";
-            CenteredText(text4);
+            CenteredText("********** Money Deposit *********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -155,7 +176,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string accNum = values[0];
@@ -165,7 +186,7 @@ namespace DSA_Project
             if (account == null)
             {
                 Console.WriteLine();
-                CenteredText("Account not found!");
+                CenteredText("Account not found!", ConsoleColor.Red);
                 Console.WriteLine();
                 return;
             }
@@ -175,9 +196,8 @@ namespace DSA_Project
 
             SaveDataToCsv(filePath, accounts);
 
-
             Console.WriteLine();
-            CenteredText("Deposit successful.");
+            CenteredText("Deposit successful.", ConsoleColor.Green);
             Console.WriteLine();
         }
 
@@ -185,7 +205,7 @@ namespace DSA_Project
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Money Withdraw **********");
+            CenteredText("********** Money Withdraw **********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -196,7 +216,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string accNum = values[0];
@@ -206,7 +226,7 @@ namespace DSA_Project
             if (account == null)
             {
                 Console.WriteLine();
-                CenteredText("Account not found!");
+                CenteredText("Account not found!", ConsoleColor.Red);
                 Console.WriteLine();
                 return;
             }
@@ -218,13 +238,13 @@ namespace DSA_Project
                 SaveDataToCsv(filePath, accounts);
 
                 Console.WriteLine();
-                CenteredText("Withdrawal successful.");
+                CenteredText("Withdrawal successful.", ConsoleColor.Green);
                 Console.WriteLine();
             }
             else
             {
                 Console.WriteLine();
-                CenteredText("Insufficient balance.");
+                CenteredText("Insufficient balance.", ConsoleColor.Red);
                 Console.WriteLine();
             }
         }
@@ -233,22 +253,22 @@ namespace DSA_Project
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Money Transfer **********");
+            CenteredText("********** Money Transfer **********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
             string[] prompts = {
-            "Enter Source Account Number: ",
-            "Enter Target Account Number: ",
-            "Enter Amount to Transfer: "
-           };
+                "Enter Source Account Number: ",
+                "Enter Target Account Number: ",
+                "Enter Amount to Transfer: "
+            };
             string[] values = new string[prompts.Length];
 
             int maxPromptLength = prompts.Max(p => p.Length);
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string sourceAccNum = values[0];
@@ -261,7 +281,7 @@ namespace DSA_Project
             if (sourceAccount == null || targetAccount == null)
             {
                 Console.WriteLine();
-                CenteredText("One or both accounts not found!");
+                CenteredText("One or both accounts not found!", ConsoleColor.Red);
                 Console.WriteLine();
                 return;
             }
@@ -277,13 +297,13 @@ namespace DSA_Project
                 SaveDataToCsv(filePath, accounts);
 
                 Console.WriteLine();
-                CenteredText("Transfer successful.");
+                CenteredText("Transfer successful.", ConsoleColor.Green);
                 Console.WriteLine();
             }
             else
             {
                 Console.WriteLine();
-                CenteredText("Insufficient balance.");
+                CenteredText("Insufficient balance.", ConsoleColor.Red);
                 Console.WriteLine();
             }
         }
@@ -292,7 +312,7 @@ namespace DSA_Project
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Transaction History **********");
+            CenteredText("********** Transaction History **********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -303,7 +323,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string accNum = values[0];
@@ -312,33 +332,34 @@ namespace DSA_Project
             if (account == null)
             {
                 Console.WriteLine();
-                CenteredText("Account not found!");
+                CenteredText("Account not found!", ConsoleColor.Red);
                 Console.WriteLine();
                 return;
             }
 
             Console.WriteLine();
-            CenteredText($"Transaction History for Account {accNum}:");
+            CenteredText($"Transaction History for Account {accNum}:", ConsoleColor.Yellow);
             Console.WriteLine();
             Console.WriteLine();
 
-            CenteredText("###########################################################################");
-            int dateWidth = 25; 
+            CenteredText("###########################################################################", ConsoleColor.Cyan);
+            int dateWidth = 25;
             int typeWidth = 25;
-            int amountWidth = 10; 
+            int amountWidth = 10;
 
             string header = $"{"Date".PadRight(dateWidth)} {"Type".PadRight(typeWidth)} {"Amount".PadRight(amountWidth)}";
-            CenteredText(header);
-            CenteredText("###########################################################################");
+            CenteredText(header, ConsoleColor.Cyan);
+            CenteredText("###########################################################################", ConsoleColor.Cyan);
 
             foreach (var transaction in account.TransactionHistory)
             {
                 string transactionDetails = $"{transaction.Date.ToString().PadRight(dateWidth)} {transaction.Type.PadRight(typeWidth)} Rs.{transaction.Amount.ToString("N2")}";
-                CenteredText(transactionDetails);
+                CenteredText(transactionDetails, ConsoleColor.White);
             }
 
             Console.WriteLine();
         }
+
         static void SaveDataToCsv(string filePath, List<Account> accounts)
         {
             using (StreamWriter writer = new StreamWriter(filePath))
@@ -347,7 +368,6 @@ namespace DSA_Project
 
                 foreach (var account in accounts)
                 {
-
                     writer.WriteLine($"Customer,{account.AccountNumber},{account.Name},{account.Address},{account.Gender},{account.Type},{account.Balance},,,,");
 
                     foreach (var transaction in account.TransactionHistory)

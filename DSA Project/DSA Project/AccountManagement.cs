@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace DSA_Project
 {
@@ -8,27 +9,49 @@ namespace DSA_Project
     {
         static List<Account> accounts = new List<Account>();
 
-        static void CenteredText(string text)
+        static void CenteredText(string text, ConsoleColor color = ConsoleColor.White)
         {
             int windowWidth = Console.WindowWidth;
             int textWidth = text.Length;
             int spaces = (windowWidth - textWidth) / 2;
             Console.SetCursorPosition(spaces, Console.CursorTop);
+            ColorHelper.SetColor(color);
             Console.WriteLine(text);
+            ColorHelper.ResetColor();
         }
 
-        static void DisplayCenteredWithBorder(string[] items)
+        static void CenteredTextMultiColor(string part1, ConsoleColor color1, string part2, ConsoleColor color2, string part3, ConsoleColor color3)
+        {
+            string combinedText = part1 + part2 + part3;
+
+            int windowWidth = Console.WindowWidth;
+            int textWidth = combinedText.Length;
+            int spaces = (windowWidth - textWidth) / 2;
+
+            Console.SetCursorPosition(spaces, Console.CursorTop);
+
+            ColorHelper.SetColor(color1);
+            Console.Write(part1);
+
+            ColorHelper.SetColor(color2);
+            Console.Write(part2);
+
+            ColorHelper.SetColor(color3);
+            Console.Write(part3);
+
+            ColorHelper.ResetColor();
+
+            Console.WriteLine();
+        }
+
+        static void DisplayCenteredWithBorder(string[] items, ConsoleColor color = ConsoleColor.Cyan)
         {
             int consoleWidth = Console.WindowWidth;
-            int maxItemLength = 0;
-            foreach (var item in items)
-            {
-                if (item.Length > maxItemLength)
-                    maxItemLength = item.Length;
-            }
+            int maxItemLength = items.Max(item => item.Length);
             int boxWidth = maxItemLength + 6;
             int leadingSpaces = (consoleWidth - boxWidth) / 2;
 
+            ColorHelper.SetColor(color);
             Console.SetCursorPosition(leadingSpaces, Console.CursorTop);
             Console.WriteLine("╔" + new string('═', boxWidth - 2) + "╗");
 
@@ -38,32 +61,31 @@ namespace DSA_Project
                 string paddedItem = item.PadRight(maxItemLength);
                 Console.WriteLine($"║  {paddedItem}  ║");
             }
+
             Console.SetCursorPosition(leadingSpaces, Console.CursorTop);
             Console.WriteLine("╚" + new string('═', boxWidth - 2) + "╝");
+            ColorHelper.ResetColor();
         }
 
         public static void accountMng()
         {
-            accounts = CsvDataHandler.LoadDataFromCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\DSA Project\\bank_data.csv");
+            accounts = CsvDataHandler.LoadDataFromCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\bank_data.csv");
 
-            while (true) 
+            while (true)
             {
                 Console.Clear();
                 Console.WriteLine();
-                string text1 = "********* Account Management ********";
-                CenteredText(text1);
+                CenteredTextMultiColor("********* ", ConsoleColor.Green, "Account Management", ConsoleColor.Yellow, " ********", ConsoleColor.Green);
 
                 string[] items = new string[]
                 {
-                   "Press 1 to Create an Account",
-                   "Press 2 to Update an Account   ",
-                   "Press 3 to Delete an Account",
-                   "Press 4 to Back to Main"
+                    "Press 1 to Create an Account",
+                    "Press 2 to Update an Account   ",
+                    "Press 3 to Delete an Account",
+                    "Press 4 to Back to Main"
                 };
-                int consoleWidth = Console.WindowWidth;
-                int maxItemLength = 0;
 
-                DisplayCenteredWithBorder(items);
+                DisplayCenteredWithBorder(items, ConsoleColor.Cyan);
                 Console.WriteLine();
 
                 string text3 = "Choose an Option: ";
@@ -71,7 +93,9 @@ namespace DSA_Project
                 int textWidth3 = text3.Length;
                 int spaces3 = (windowWidth3 - textWidth3) / 2;
                 Console.SetCursorPosition(spaces3, Console.CursorTop);
+                ColorHelper.SetColor(ConsoleColor.Magenta);
                 Console.Write(text3);
+                ColorHelper.ResetColor();
                 string input = Console.ReadLine();
 
                 if (int.TryParse(input, out int choice))
@@ -89,33 +113,32 @@ namespace DSA_Project
                             break;
                         case 4:
                             Console.Clear();
-                            return; 
+                            return;
                         default:
-                            Console.WriteLine("Invalid choice! Enter Again.");
+                            CenteredText("Invalid choice! Enter Again.", ConsoleColor.Red);
                             break;
                     }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine();
-                CenteredText("Press 3 to go back to the Account Management Menu or Press 7 to go back Main Menu..!");
+                CenteredText("Press 3 to go back to the Account Management Menu or Press 7 to go back Main Menu..!", ConsoleColor.Blue);
                 while (true)
                 {
                     var key = Console.ReadKey(intercept: true).Key;
-                    if (key == ConsoleKey.D3) 
+                    if (key == ConsoleKey.D3)
                     {
-                        break; 
+                        break;
                     }
-                    else if (key == ConsoleKey.D7) 
+                    else if (key == ConsoleKey.D7)
                     {
                         Console.Clear();
-                        Main(); 
-                        return; 
+                        Main();
+                        return;
                     }
                     else
                     {
-                        CenteredText("Invalid choice! Enter Again.");
-                        
+                        CenteredText("Invalid choice! Enter Again.", ConsoleColor.Red);
                     }
                 }
             }
@@ -125,7 +148,7 @@ namespace DSA_Project
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Create an Account ***********");
+            CenteredText("********** Create an Account ***********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -136,15 +159,14 @@ namespace DSA_Project
                 "Address: ",
                 "Gender (M/F): ",
                 "Balance: "
-              };
+            };
 
             string[] values = new string[prompts.Length];
-
             int maxPromptLength = prompts.Max(p => p.Length);
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string name = values[0];
@@ -157,25 +179,25 @@ namespace DSA_Project
             {
                 if (string.IsNullOrEmpty(accNum))
                 {
-                    CenteredText("Account number cannot be empty. Please enter again:");
+                    CenteredText("Account number cannot be empty. Please enter again:", ConsoleColor.Red);
                 }
                 else if (accNum.Length != 5)
                 {
-                    CenteredText("Account number must be 5 digits. Please enter again:");
+                    CenteredText("Account number must be 5 digits. Please enter again:", ConsoleColor.Red);
                 }
                 else if (!ulong.TryParse(accNum, out _))
                 {
-                    CenteredText("Account number must contain only numbers. Please enter again:");
+                    CenteredText("Account number must contain only numbers. Please enter again:", ConsoleColor.Red);
                 }
                 else if (accounts.Any(acc => acc.AccountNumber == accNum))
                 {
-                    CenteredText("Account number already exists. Please enter a unique account number:");
+                    CenteredText("Account number already exists. Please enter a unique account number:", ConsoleColor.Red);
                 }
                 else
                 {
                     break;
                 }
-                CenteredInputPrompt(prompts[1], maxPromptLength, out accNum);
+                CenteredInputPrompt(prompts[1], maxPromptLength, out accNum, ConsoleColor.Cyan);
                 values[1] = accNum;
             }
 
@@ -183,17 +205,17 @@ namespace DSA_Project
             {
                 if (string.IsNullOrEmpty(type))
                 {
-                    CenteredText("Account type cannot be empty. Please enter again:");
+                    CenteredText("Account type cannot be empty. Please enter again:", ConsoleColor.Red);
                 }
                 else if (type.ToUpper() != "C" && type.ToUpper() != "S")
                 {
-                    CenteredText("Account type must be 'C' (Current) or 'S' (Savings). Please enter again:");
+                    CenteredText("Account type must be 'C' (Current) or 'S' (Savings). Please enter again:", ConsoleColor.Red);
                 }
                 else
                 {
                     break;
                 }
-                CenteredInputPrompt(prompts[2], maxPromptLength, out type);
+                CenteredInputPrompt(prompts[2], maxPromptLength, out type, ConsoleColor.Cyan);
                 values[2] = type;
             }
 
@@ -201,17 +223,17 @@ namespace DSA_Project
             {
                 if (string.IsNullOrEmpty(gender))
                 {
-                    CenteredText("Gender cannot be empty. Please enter again:");
+                    CenteredText("Gender cannot be empty. Please enter again:", ConsoleColor.Red);
                 }
                 else if (gender.ToUpper() != "M" && gender.ToUpper() != "F")
                 {
-                    CenteredText("Gender must be 'M' (Male) or 'F' (Female). Please enter again:");
+                    CenteredText("Gender must be 'M' (Male) or 'F' (Female). Please enter again:", ConsoleColor.Red);
                 }
                 else
                 {
                     break;
                 }
-                CenteredInputPrompt(prompts[4], maxPromptLength, out gender);
+                CenteredInputPrompt(prompts[4], maxPromptLength, out gender, ConsoleColor.Cyan);
                 values[4] = gender;
             }
 
@@ -226,30 +248,30 @@ namespace DSA_Project
                     }
                     else
                     {
-                        CenteredText("Balance cannot be negative. Please enter a valid number.");
+                        CenteredText("Balance cannot be negative. Please enter a valid number.", ConsoleColor.Red);
                     }
                 }
                 else
                 {
-                    CenteredText("Invalid balance. Please enter a valid number.");
+                    CenteredText("Invalid balance. Please enter a valid number.", ConsoleColor.Red);
                 }
 
-                CenteredInputPrompt(prompts[5], maxPromptLength, out values[5]);
+                CenteredInputPrompt(prompts[5], maxPromptLength, out values[5], ConsoleColor.Cyan);
             }
 
             Account newAccount = new Account(name, address, accNum, balance, type, gender);
             accounts.Add(newAccount);
 
-            SaveDataToCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\DSA Project\\bank_data.csv", accounts);
+            SaveDataToCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\bank_data.csv", accounts);
 
             Console.WriteLine();
-            CenteredText("Account created successfully..!");
+            CenteredText("Account created successfully..!", ConsoleColor.Green);
             Console.WriteLine();
 
-            CenteredText("Account Details:");
+            CenteredText("Account Details:", ConsoleColor.Yellow);
             Console.WriteLine();
 
-            CenteredText("###########################################################################################");
+            CenteredText("###########################################################################################", ConsoleColor.Cyan);
             int accNumberWidth1 = 15;
             int accNumberWidth = 18;
             int nameWidth = 20;
@@ -267,7 +289,7 @@ namespace DSA_Project
                 "Type".PadRight(typeWidth) +
                 "Balance".PadRight(balanceWidth)
             );
-            CenteredText("###########################################################################################");
+            CenteredText("###########################################################################################", ConsoleColor.Cyan);
 
             Console.WriteLine();
             Console.Write("          ".PadRight(accNumberWidth1));
@@ -277,32 +299,32 @@ namespace DSA_Project
             Console.Write($"{values[4].ToString().PadRight(genderWidth)}");
             Console.Write($"{values[2].ToString().PadRight(typeWidth)}");
             Console.Write($"{values[5].ToString().PadRight(balanceWidth)}");
-           
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine();
 
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
         }
 
-
-        static void CenteredInputPrompt(string prompt, int maxPromptLength, out string value)
+        static void CenteredInputPrompt(string prompt, int maxPromptLength, out string value, ConsoleColor color = ConsoleColor.White)
         {
             int windowWidth = Console.WindowWidth;
             int totalTextWidth = maxPromptLength + 1;
             int spaces = (windowWidth - totalTextWidth - 8) / 2;
 
             Console.SetCursorPosition(spaces, Console.CursorTop);
+            ColorHelper.SetColor(color);
             Console.Write(prompt);
 
             Console.SetCursorPosition(spaces + prompt.Length, Console.CursorTop);
             value = Console.ReadLine();
+            ColorHelper.ResetColor();
         }
 
         static void updateAcc()
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("************ Update an Account *************");
+            CenteredText("************ Update an Account *************", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -313,7 +335,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string accNum = values[0].Trim();
@@ -323,24 +345,24 @@ namespace DSA_Project
             if (accountToUpdate == null)
             {
                 Console.WriteLine();
-                CenteredText("Account not found!");
+                CenteredText("Account not found!", ConsoleColor.Red);
                 Console.WriteLine();
                 return;
             }
 
             Console.WriteLine();
-            CenteredText("Updating Account for: " + accountToUpdate.Name + "             ");
+            CenteredText("Updating Account for: " + accountToUpdate.Name + "             ", ConsoleColor.Yellow);
 
             string[] updatePrompts = {
                 "New Name (leave blank to keep current): ",
                 "New Address (leave blank to keep current): ",
                 "New Balance (leave blank to keep current): "
-                 };
+            };
             string[] updateValues = new string[updatePrompts.Length];
 
             for (int i = 0; i < updatePrompts.Length; i++)
             {
-                CenteredInputPrompt(updatePrompts[i], maxPromptLength, out updateValues[i]);
+                CenteredInputPrompt(updatePrompts[i], maxPromptLength, out updateValues[i], ConsoleColor.Cyan);
             }
 
             string newName = updateValues[0];
@@ -356,17 +378,17 @@ namespace DSA_Project
             if (!string.IsNullOrEmpty(newBalanceInput) && decimal.TryParse(newBalanceInput, out decimal newBalance))
                 accountToUpdate.Balance = newBalance;
 
-            SaveDataToCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\DSA Project\\bank_data.csv", accounts);
+            SaveDataToCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\bank_data.csv", accounts);
 
             Console.WriteLine();
-            CenteredText("Account updated successfully!");
-            
+            CenteredText("Account updated successfully!", ConsoleColor.Green);
+
             Console.WriteLine();
 
-            CenteredText("Upadetd Account Details:");
+            CenteredText("Updated Account Details:", ConsoleColor.Yellow);
             Console.WriteLine();
 
-            CenteredText("#############################################################################################");
+            CenteredText("#############################################################################################", ConsoleColor.Cyan);
             int accNumberWidth1 = 15;
             int accNumberWidth = 18;
             int nameWidth = 20;
@@ -384,26 +406,27 @@ namespace DSA_Project
                 "Type".PadRight(typeWidth) +
                 "Balance".PadRight(balanceWidth)
             );
-            CenteredText("#############################################################################################");
+            CenteredText("#############################################################################################", ConsoleColor.Cyan);
 
             Console.WriteLine();
             Console.Write("          ".PadRight(accNumberWidth1));
             Console.Write($"{accountToUpdate.AccountNumber.PadRight(accNumberWidth)}");
             Console.Write($"{accountToUpdate.Name.PadRight(nameWidth)}");
             Console.Write($"{accountToUpdate.Address.PadRight(addressWidth)}");
-            Console.Write($"{accountToUpdate.Gender.PadRight(genderWidth)}"); 
-            Console.Write($"{accountToUpdate.Type.PadRight(typeWidth)}");     
+            Console.Write($"{accountToUpdate.Gender.PadRight(genderWidth)}");
+            Console.Write($"{accountToUpdate.Type.PadRight(typeWidth)}");
             Console.Write($"{accountToUpdate.Balance.ToString("N2").PadRight(balanceWidth)}");
 
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine();
         }
+
         static void deleteAcc()
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("************ Delete an Account *************");
+            CenteredText("************ Delete an Account *************", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -414,7 +437,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string accNum = values[0];
@@ -424,17 +447,17 @@ namespace DSA_Project
             if (account == null)
             {
                 Console.WriteLine();
-                CenteredText("Account not found!");
+                CenteredText("Account not found!", ConsoleColor.Red);
                 Console.WriteLine();
                 return;
             }
 
             accounts.Remove(account);
 
-            SaveDataToCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\DSA Project\\bank_data.csv", accounts);
+            SaveDataToCsv("C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\bank_data.csv", accounts);
 
             Console.WriteLine();
-            CenteredText("Account deleted successfully!");
+            CenteredText("Account deleted successfully!", ConsoleColor.Green);
             Console.WriteLine();
         }
 
@@ -442,12 +465,10 @@ namespace DSA_Project
         {
             using (StreamWriter writer = new StreamWriter(filePath))
             {
-
                 writer.WriteLine("Type,AccountNumber,Name,Address,Gender,AccountType,Balance,TransactionType,Amount,TransactionDate,LoanAmount,InterestRate,LoanEndDate");
 
                 foreach (var account in accounts)
                 {
-                    
                     writer.WriteLine($"Customer,{account.AccountNumber},{account.Name},{account.Address},{account.Gender},{account.Type},{account.Balance},,,,");
 
                     foreach (var transaction in account.TransactionHistory)

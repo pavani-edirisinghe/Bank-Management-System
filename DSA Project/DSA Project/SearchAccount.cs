@@ -1,37 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DSA_Project
 {
     class SearchAccount : Project
     {
-        static void CenteredText(string text)
+        static void CenteredText(string text, ConsoleColor color = ConsoleColor.White)
         {
             int windowWidth = Console.WindowWidth;
             int textWidth = text.Length;
-            int spaces = Math.Max(0, (windowWidth - textWidth) / 2); 
+            int spaces = Math.Max(0, (windowWidth - textWidth) / 2);
 
             Console.WriteLine();
             Console.SetCursorPosition(spaces, Console.CursorTop);
+            ColorHelper.SetColor(color);
             Console.WriteLine(text);
+            ColorHelper.ResetColor();
         }
 
-        static void DisplayCenteredWithBorder(string[] items)
+        static void DisplayCenteredWithBorder(string[] items, ConsoleColor color = ConsoleColor.Cyan)
         {
             int consoleWidth = Console.WindowWidth;
-            int maxItemLength = 0;
-            foreach (var item in items)
-            {
-                if (item.Length > maxItemLength)
-                    maxItemLength = item.Length;
-            }
+            int maxItemLength = items.Max(item => item.Length);
             int boxWidth = maxItemLength + 6;
             int leadingSpaces = (consoleWidth - boxWidth) / 2;
 
+            ColorHelper.SetColor(color);
             Console.SetCursorPosition(leadingSpaces, Console.CursorTop);
             Console.WriteLine("╔" + new string('═', boxWidth - 2) + "╗");
 
@@ -41,31 +37,34 @@ namespace DSA_Project
                 string paddedItem = item.PadRight(maxItemLength);
                 Console.WriteLine($"║  {paddedItem}  ║");
             }
+
             Console.SetCursorPosition(leadingSpaces, Console.CursorTop);
             Console.WriteLine("╚" + new string('═', boxWidth - 2) + "╝");
+            ColorHelper.ResetColor();
         }
 
-        static void CenteredInputPrompt(string prompt, int maxPromptLength, out string value)
+        static void CenteredInputPrompt(string prompt, int maxPromptLength, out string value, ConsoleColor color = ConsoleColor.White)
         {
             int windowWidth = Console.WindowWidth;
             int totalTextWidth = maxPromptLength + 1;
             int spaces = (windowWidth - totalTextWidth - 8) / 2;
 
             Console.SetCursorPosition(spaces, Console.CursorTop);
+            ColorHelper.SetColor(color);
             Console.Write(prompt);
 
             Console.SetCursorPosition(spaces + prompt.Length, Console.CursorTop);
             value = Console.ReadLine();
+            ColorHelper.ResetColor();
         }
+
         public static void searchAcc(List<Account> accounts)
         {
             while (true)
             {
-          
                 Console.Clear();
                 Console.WriteLine();
-                string text1 = "********** Search Account ***********";
-                CenteredText(text1);
+                CenteredText("********** Search Account ***********", ConsoleColor.Yellow);
 
                 string[] items = new string[]
                 {
@@ -76,10 +75,7 @@ namespace DSA_Project
                     "Press 5 to Back"
                 };
 
-                int consoleWidth = Console.WindowWidth;
-                int maxItemLength = 0;
-
-                DisplayCenteredWithBorder(items);
+                DisplayCenteredWithBorder(items, ConsoleColor.Cyan);
                 Console.WriteLine();
 
                 string text3 = "Choose an option: ";
@@ -87,7 +83,9 @@ namespace DSA_Project
                 int textWidth3 = text3.Length;
                 int spaces3 = (windowWidth3 - textWidth3) / 2;
                 Console.SetCursorPosition(spaces3, Console.CursorTop);
+                ColorHelper.SetColor(ConsoleColor.Magenta);
                 Console.Write(text3);
+                ColorHelper.ResetColor();
                 string input = Console.ReadLine();
 
                 if (int.TryParse(input, out int choice))
@@ -100,31 +98,29 @@ namespace DSA_Project
                         case 2:
                             SearchByName(accounts);
                             break;
-
                         case 3:
                             Console.Clear();
                             Console.WriteLine(new string('\n', 100));
                             SortByBalance(accounts);
-
                             break;
-
                         case 4:
                             Console.Clear();
-                            Console.WriteLine(new string('\n', 100)); 
+                            Console.WriteLine(new string('\n', 100));
                             SortByCreationDate(accounts);
                             break;
                         case 5:
                             Console.Clear();
-                            return; 
+                            return;
                         default:
-                            Console.WriteLine("Invalid choice! Please try again.");
+                            CenteredText("Invalid choice! Please try again.", ConsoleColor.Red);
                             break;
                     }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine();
-                CenteredText("Press 3 to go back to the Loan Management Menu or Press 7 to go back Main Menu..!");
+                CenteredText("Press 3 to go back to the Loan Management Menu or Press 7 to go back Main Menu..!", ConsoleColor.Blue);
+
                 while (true)
                 {
                     var key = Console.ReadKey(intercept: true).Key;
@@ -142,19 +138,17 @@ namespace DSA_Project
                     }
                     else
                     {
-                        CenteredText("Invalid choice! Enter Again.");
-
+                        CenteredText("Invalid choice! Enter Again.", ConsoleColor.Red);
                     }
                 }
             }
         }
 
-        // Search by account number
         static void SearchByAccountNumber(List<Account> accounts)
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Search by Account Number **********");
+            CenteredText("********** Search by Account Number **********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -165,7 +159,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string accNum = values[0];
@@ -174,10 +168,9 @@ namespace DSA_Project
             if (account != null)
             {
                 Console.WriteLine();
-
                 Console.WriteLine();
 
-                CenteredText("###########################################################################################");
+                CenteredText("###########################################################################################", ConsoleColor.Cyan);
                 int accNumberWidth1 = 15;
                 int accNumberWidth = 18;
                 int nameWidth = 20;
@@ -195,15 +188,15 @@ namespace DSA_Project
                     "Type".PadRight(typeWidth) +
                     "Balance".PadRight(balanceWidth)
                 );
-                CenteredText("###########################################################################################");
+                CenteredText("###########################################################################################", ConsoleColor.Cyan);
 
                 Console.WriteLine();
                 Console.Write("          ".PadRight(accNumberWidth1));
                 Console.Write($"{account.AccountNumber.PadRight(accNumberWidth)}");
                 Console.Write($"{account.Name.PadRight(nameWidth)}");
                 Console.Write($"{account.Address.PadRight(addressWidth)}");
-                Console.Write($"{account.Gender.PadRight(genderWidth)}"); 
-                Console.Write($"{account.Type.PadRight(typeWidth)}");    
+                Console.Write($"{account.Gender.PadRight(genderWidth)}");
+                Console.Write($"{account.Type.PadRight(typeWidth)}");
                 Console.Write($"{account.Balance.ToString("N2").PadRight(balanceWidth)}");
 
                 Console.WriteLine();
@@ -213,18 +206,16 @@ namespace DSA_Project
             else
             {
                 Console.WriteLine();
-                CenteredText("Account not found.");
+                CenteredText("Account not found.", ConsoleColor.Red);
                 Console.WriteLine();
             }
         }
 
-        // Search by name
-        // BST  for Search by Name
         static void SearchByName(List<Account> accounts)
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Search by Name **********");
+            CenteredText("********** Search by Name **********", ConsoleColor.Yellow);
 
             Console.WriteLine();
 
@@ -235,7 +226,7 @@ namespace DSA_Project
 
             for (int i = 0; i < prompts.Length; i++)
             {
-                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i]);
+                CenteredInputPrompt(prompts[i], maxPromptLength, out values[i], ConsoleColor.Cyan);
             }
 
             string name = values[0];
@@ -251,10 +242,10 @@ namespace DSA_Project
             if (results.Count > 0)
             {
                 Console.WriteLine();
-                CenteredText("Search Results:");
+                CenteredText("Search Results:", ConsoleColor.Yellow);
                 Console.WriteLine();
 
-                CenteredText("###########################################################################################");
+                CenteredText("###########################################################################################", ConsoleColor.Cyan);
                 int accNumberWidth1 = 15;
                 int accNumberWidth = 18;
                 int nameWidth = 20;
@@ -272,7 +263,7 @@ namespace DSA_Project
                     "Type".PadRight(typeWidth) +
                     "Balance".PadRight(balanceWidth)
                 );
-                CenteredText("###########################################################################################");
+                CenteredText("###########################################################################################", ConsoleColor.Cyan);
 
                 foreach (var account in results)
                 {
@@ -281,8 +272,8 @@ namespace DSA_Project
                     Console.Write($"{account.AccountNumber.PadRight(accNumberWidth)}");
                     Console.Write($"{account.Name.PadRight(nameWidth)}");
                     Console.Write($"{account.Address.PadRight(addressWidth)}");
-                    Console.Write($"{account.Gender.PadRight(genderWidth)}"); 
-                    Console.Write($"{account.Type.PadRight(typeWidth)}");   
+                    Console.Write($"{account.Gender.PadRight(genderWidth)}");
+                    Console.Write($"{account.Type.PadRight(typeWidth)}");
                     Console.Write($"{account.Balance.ToString("N2").PadRight(balanceWidth)}");
                     Console.WriteLine();
                 }
@@ -292,10 +283,11 @@ namespace DSA_Project
             else
             {
                 Console.WriteLine();
-                CenteredText("No accounts found with the given name.");
+                CenteredText("No accounts found with the given name.", ConsoleColor.Red);
                 Console.WriteLine();
             }
         }
+
 
         // Use List for Search by Name
         /* static void SearchByName(List<Account> accounts)
@@ -351,14 +343,18 @@ namespace DSA_Project
          }*/
 
 
-        //Sort by Balance
-        // Merge Sort Algorithm for Sort by Balance
         static void SortByBalance(List<Account> accounts)
         {
             Console.Clear();
             Console.WriteLine();
 
+            Stopwatch t = new Stopwatch();
+            t.Start();
             List<Account> sortedAccounts = MergeSort(accounts);
+            t.Stop();
+
+            long elapsedTicks = t.ElapsedTicks;
+            double elapsedNanoseconds = elapsedTicks * (100000000.0 / Stopwatch.Frequency);
 
             DisplaySortedAccounts(sortedAccounts);
         }
@@ -416,13 +412,13 @@ namespace DSA_Project
 
         static void DisplaySortedAccounts(List<Account> sortedAccounts)
         {
-            Console.Clear(); 
-            CenteredText("********** Accounts Sorted by Balance (Ascending) **********");
-            Console.WriteLine(); 
-            CenteredText("Accounts sorted by balance (ascending):");
+            Console.Clear();
+            CenteredText("********** Accounts Sorted by Balance (Ascending) **********", ConsoleColor.Yellow);
+            Console.WriteLine();
+            CenteredText("Accounts sorted by balance (ascending):", ConsoleColor.Yellow);
 
             Console.WriteLine();
-            CenteredText("###########################################################################################");
+            CenteredText("###########################################################################################", ConsoleColor.Cyan);
             int accNumberWidth1 = 15;
             int accNumberWidth = 18;
             int nameWidth = 20;
@@ -440,7 +436,7 @@ namespace DSA_Project
                 "Type".PadRight(typeWidth) +
                 "Balance".PadRight(balanceWidth)
             );
-            CenteredText("###########################################################################################");
+            CenteredText("###########################################################################################", ConsoleColor.Cyan);
 
             foreach (var account in sortedAccounts)
             {
@@ -462,6 +458,10 @@ namespace DSA_Project
         // Selection Sort Algorithm for Sort by Balance
         /*static void SortByBalance(List<Account> accounts)
         {
+            Stopwatch t = new Stopwatch();
+            t.Start();
+        
+
             for (int i = 0; i < accounts.Count - 1; i++)
             {
                 int minIndex = i;
@@ -481,6 +481,10 @@ namespace DSA_Project
                     accounts[minIndex] = temp;
                 }
             }
+            t.Stop();
+
+            long elapsedTicks = t.ElapsedTicks;
+            double elapsedNanoseconds = elapsedTicks * (100000000.0 / Stopwatch.Frequency);
 
             CenteredText("Accounts sorted by balance (ascending):");
             Console.WriteLine();
@@ -518,6 +522,7 @@ namespace DSA_Project
                 Console.WriteLine();
             }
 
+            Console.WriteLine($"Time taken: {elapsedNanoseconds}ns");
             Console.WriteLine();
         }*/
 
@@ -528,6 +533,8 @@ namespace DSA_Project
             List<Account> sortedAccounts = new List<Account>(accounts);
 
             int n = sortedAccounts.Count;
+           Stopwatch t = new Stopwatch();
+            t.Start();
             for (int i = 0; i < n - 1; i++)
             {
                 for (int j = 0; j < n - i - 1; j++)
@@ -540,6 +547,10 @@ namespace DSA_Project
                     }
                 }
             }
+            t.Stop();
+
+            long elapsedTicks = t.ElapsedTicks;
+            double elapsedNanoseconds = elapsedTicks * (100000000.0 / Stopwatch.Frequency);
             Console.WriteLine("Accounts sorted by balance (ascending):");
 
             Console.WriteLine();
@@ -575,20 +586,19 @@ namespace DSA_Project
                 Console.Write($"{account.Balance.ToString("N2").PadRight(balanceWidth)}");
                 Console.WriteLine();
             }
-
+            Console.WriteLine($"Time taken: {elapsedNanoseconds}ns");
             Console.WriteLine();
         }*/
 
-
-        // Sort by Creation Date
-        //Merge Sort Algorithm for Sorting by Cration Date
         static void SortByCreationDate(List<Account> accounts)
         {
             Console.Clear();
             Console.WriteLine();
-            CenteredText("********** Accounts Sorted by Creation Date (Ascending) **********");
+            CenteredText("********** Accounts Sorted by Creation Date (Ascending) **********", ConsoleColor.Yellow);
 
             Console.WriteLine();
+            Stopwatch t = new Stopwatch();
+            t.Start();
 
             void MergeSort(List<Account> accounts, int left, int right)
             {
@@ -650,11 +660,15 @@ namespace DSA_Project
 
             MergeSort(accounts, 0, accounts.Count - 1);
 
-            CenteredText("Accounts sorted by creation date (ascending):");
+            t.Stop();
+            long elapsedTicks = t.ElapsedTicks;
+            double elapsedNanoseconds = elapsedTicks * (100000000.0 / Stopwatch.Frequency);
+
+            CenteredText("Accounts sorted by creation date (ascending):", ConsoleColor.Yellow);
             Console.WriteLine();
             Console.WriteLine();
 
-            CenteredText("###########################################################################################");
+            CenteredText("###########################################################################################", ConsoleColor.Cyan);
             int accNumberWidth1 = 15;
             int accNumberWidth = 18;
             int nameWidth = 20;
@@ -672,7 +686,7 @@ namespace DSA_Project
                 "Type".PadRight(typeWidth) +
                 "Balance".PadRight(balanceWidth)
             );
-            CenteredText("###########################################################################################");
+            CenteredText("###########################################################################################", ConsoleColor.Cyan);
 
             foreach (var account in accounts)
             {
@@ -681,20 +695,21 @@ namespace DSA_Project
                 Console.Write($"{account.AccountNumber.PadRight(accNumberWidth)}");
                 Console.Write($"{account.Name.PadRight(nameWidth)}");
                 Console.Write($"{account.Address.PadRight(addressWidth)}");
-                Console.Write($"{account.Gender.PadRight(genderWidth)}"); 
-                Console.Write($"{account.Type.PadRight(typeWidth)}");    
+                Console.Write($"{account.Gender.PadRight(genderWidth)}");
+                Console.Write($"{account.Type.PadRight(typeWidth)}");
                 Console.Write($"{account.Balance.ToString("N2").PadRight(balanceWidth)}");
                 Console.WriteLine();
             }
 
             Console.WriteLine();
             Console.WriteLine();
+            Console.WriteLine();
         }
-
-
         // Quick Sort Algorithm for Sort by Creation Date
         /*static void SortByCreationDate(List<Account> accounts)
         {
+            Stopwatch t = new Stopwatch();
+            t.Start();
             void Swap(List<Account> accounts, int i, int j)
             {
                 var temp = accounts[i];
@@ -735,6 +750,10 @@ namespace DSA_Project
 
             QuickSort(accounts, 0, accounts.Count - 1);
 
+            t.Stop();
+            long elapsedTicks = t.ElapsedTicks;
+            double elapsedNanoseconds = elapsedTicks * (100000000.0 / Stopwatch.Frequency);
+
             CenteredText("Accounts sorted by creation date (ascending):");
             Console.WriteLine();
             Console.WriteLine();
@@ -772,6 +791,7 @@ namespace DSA_Project
                 Console.WriteLine();
             }
 
+            Console.WriteLine($"Time taken: {elapsedNanoseconds}ns");
             Console.WriteLine();
         }*/
 
@@ -779,6 +799,9 @@ namespace DSA_Project
         // Insertion Sort Algorithm for Sort by Creation Date
         /*static void SortByCreationDate(List<Account> accounts)
         {
+            Stopwatch t = new Stopwatch();
+            t.Start();
+
             for (int i = 1; i < accounts.Count; i++)
             {
                 var currentAccount = accounts[i];
@@ -792,6 +815,9 @@ namespace DSA_Project
 
                 accounts[j + 1] = currentAccount;
             }
+            t.Stop();
+            long elapsedTicks = t.ElapsedTicks;
+            double elapsedNanoseconds = elapsedTicks * (100000000.0 / Stopwatch.Frequency);
 
             CenteredText("Accounts sorted by creation date (ascending):");
             Console.WriteLine();
@@ -829,7 +855,7 @@ namespace DSA_Project
                 Console.Write($"{account.Balance.ToString("N2").PadRight(balanceWidth)}");
                 Console.WriteLine();
             }
-
+            Console.WriteLine($"Time taken: {elapsedNanoseconds}ns");
             Console.WriteLine();
         }*/
     }

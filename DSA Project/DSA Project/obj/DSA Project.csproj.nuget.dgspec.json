@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\DSA Project\\DSA Project\\DSA Project.csproj": {}
+    "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank-Management-System\\DSA Project\\DSA Project\\DSA Project.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\DSA Project\\DSA Project\\DSA Project.csproj": {
+    "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank-Management-System\\DSA Project\\DSA Project\\DSA Project.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\DSA Project\\DSA Project\\DSA Project.csproj",
+        "projectUniqueName": "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank-Management-System\\DSA Project\\DSA Project\\DSA Project.csproj",
         "projectName": "DSA Project",
-        "projectPath": "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\DSA Project\\DSA Project\\DSA Project.csproj",
+        "projectPath": "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank-Management-System\\DSA Project\\DSA Project\\DSA Project.csproj",
         "packagesPath": "C:\\Users\\PAVANI EDIRISINGHE\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank Management System\\DSA Project\\DSA Project\\obj\\",
+        "outputPath": "C:\\Users\\PAVANI EDIRISINGHE\\Desktop\\Bank-Management-System\\DSA Project\\DSA Project\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

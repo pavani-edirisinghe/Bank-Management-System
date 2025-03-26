@@ -5,7 +5,8 @@ A **Bank Management System** built using C# Console Application. This system all
 ## 🚀 Features
 
 ✅ **Account Management**  
-   - Create new accounts  
+   - Create new accounts
+   - Update accounts 
    - View account details  
    - Delete accounts  
 
